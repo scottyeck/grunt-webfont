@@ -176,6 +176,7 @@ module.exports = function(grunt) {
 			generateWoff2Font,
 			generateStylesheet,
 			generateDemoHtml,
+			generateCustomOutputs,
 			printDone
 		], completeTask);
 
@@ -387,6 +388,11 @@ module.exports = function(grunt) {
 			} catch (err) {
 				logger.error(err.message);
 			}
+		}
+
+		function generateCustomOutputs(done) {
+
+			done();
 		}
 
 		/**
