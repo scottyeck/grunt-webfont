@@ -9,6 +9,7 @@ module.exports = function(grunt) {
 	'use strict';
 
 	var fs = require('fs');
+	var fse = require('fs-extra');
 	var path = require('path');
 	var async = require('async');
 	var glob = require('glob');
@@ -103,7 +104,8 @@ module.exports = function(grunt) {
 			fontHeight: options.fontHeight !== undefined ? options.fontHeight : 512,
 			descent: options.descent !== undefined ? options.descent : 64,
 			cache: options.cache || path.join(__dirname, '..', '.cache'),
-			callback: options.callback
+			callback: options.callback,
+			customOutputs: options.customOutput
 		};
 
 		o = _.extend(o, {
@@ -390,8 +392,35 @@ module.exports = function(grunt) {
 			}
 		}
 
+		function generateCustomOutput(outputConfig) {
+
+			var context = o;
+
+			var templatePath = outputConfig.template,
+				extension = path.extname(templatePath),
+				syntax = outputConfig.syntax || '';
+
+			var template = readTemplate(templatePath, syntax, extension),
+				output = renderTemplate(template, context);
+
+			var dest = outputConfig.dest || o.dest,
+				destName = outputConfig.destName || path.baseName(outputConfig.template);
+
+			var filepath = path.join(dest, destName);
+
+			// Ensure existence of parent directory and write file
+			fse.ensureDirSync(dest);
+			fs.writeFileSync(filepath, output);
+		}
+
 		function generateCustomOutputs(done) {
 
+			if (!o.customOutputs.length || o.customOutputs.length < 1) {
+				done();
+				return;
+			}
+
+			_.each(o.customOutputs, generateCustomOutput);
 			done();
 		}
 
