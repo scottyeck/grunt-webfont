@@ -282,7 +282,19 @@ module.exports = function(grunt) {
 					dest: 'test/tmp/target_overrides_icons',
 					destCss: 'test/tmp/target_overrides_css',
 				}
-			}
+			},
+			custom_output: {
+				src: 'test/src/*.svg',
+				options: {
+					dest: 'test/tmp/custom_output_icons',
+					destCss: 'test/tmp/custom_output_css',
+					customOutput: [{
+						template: 'test/templates/custom.js',
+						dest: 'test/tmp/custom_output',
+						destName: 'test-icon-config.js'
+					}]
+				}
+			},
 		},
 		nodeunit: {
 			all: ['test/webfont_test.js']
