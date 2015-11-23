@@ -415,7 +415,7 @@ options: {
 		// ...
 	}
 }
-````
+```
 
 ### Config Examples
 
