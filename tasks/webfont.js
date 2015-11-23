@@ -465,11 +465,25 @@ module.exports = function(grunt) {
 
 			// Prepares config attributes related to destination filepath
 			var dest = outputConfig.dest || o.dest;
-			var destName = outputConfig.destName || path.baseName(outputConfig.template);
-			var filepath = path.join(dest, destName);
 
-			// Ensure existence of parent directory and write file
-			fse.ensureDirSync(dest);
+			var filepath;
+			var destParent;
+			var destName;
+
+			if (path.extname(dest) === '') {
+				// If user specifies a directory, filename should be same as template
+				destParent = dest;
+				destName = path.basename(outputConfig.template);
+				filepath = path.join(dest, destName);
+			}
+			else {
+				// If user specifies a file, that is our filepath
+				destParent = path.dirname(dest);
+				filepath = dest;
+			}
+
+			// Ensure existence of parent directory and output to file as desired
+			fse.ensureDirSync(destParent);
 			fs.writeFileSync(filepath, output);
 		}
 

@@ -290,8 +290,10 @@ module.exports = function(grunt) {
 					destCss: 'test/tmp/custom_output_css',
 					customOutput: [{
 						template: 'test/templates/custom.js',
-						dest: 'test/tmp/custom_output',
-						destName: 'test-icon-config.js'
+						dest: 'test/tmp/custom_output/test-icon-config.js'
+					}, {
+						template: 'test/templates/custom.json',
+						dest: 'test/tmp/custom_output'
 					}]
 				}
 			},
