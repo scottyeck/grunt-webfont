@@ -841,6 +841,13 @@ exports.webfont = {
 		});
 
 		test.done();
+	},
+
+	custom_outputs: function(test) {
+
+		// File should have been created
+		test.ok(fs.existsSync('test/tmp/custom_output/test-icon-config.js'));	
+		test.done();
 	}
 
 };
