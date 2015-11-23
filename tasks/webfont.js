@@ -392,20 +392,80 @@ module.exports = function(grunt) {
 			}
 		}
 
+		/*
+		 * Prepares context for compilation of template
+		 */
+		function prepareTemplateContext(key) {
+
+			var context = _.extend({}, o);
+
+			if (_.isUndefined(key)) {
+				return context;
+			}
+
+			if (key === 'html') {
+				return prepareHTMLContext(context);
+			}
+
+			logger.warn('Key specified to function `prepareTemplateContext` does not correspond to a particular method.');
+			return context;
+		}
+
+		/*
+		 * Makes custom extends necessary for use with preparing the template context
+		 * object for the HTML demo.
+		 */
+		function prepareHTMLContext(context) {
+
+			var htmlStyles;
+
+			// Prepare relative font paths for injection into @font-face refs in HTML
+			var relativeRe = new RegExp(_s.escapeRegExp(o.relativeFontPath), 'g');
+			var htmlRelativeFontPath = normalizePath(path.relative(o.destHtml, o.dest));
+			var _fontSrc1 = o.fontSrc1.replace(relativeRe, htmlRelativeFontPath);
+			var _fontSrc2 = o.fontSrc2.replace(relativeRe, htmlRelativeFontPath);
+
+			_.extend(context, {
+				fontSrc1: _fontSrc1,
+				fontSrc2: _fontSrc2,
+				fontfaceStyles: true,
+				baseStyles: true,
+				extraStyles: false,
+				iconsStyles: true,
+				stylesheet: 'css'
+			});
+
+			// Prepares CSS for injection into <style> tag at to of HTML
+			htmlStyles = renderTemplate(o.cssTemplate, context);
+			_.extend(context, {
+				styles: htmlStyles
+			});
+
+			return context;
+		}
+
+		/*
+		 * Iterator function used as callback by looping construct below to
+		 * render "custom output" via mini configuration objects specified in
+		 * the array `options.customOutputs`.
+		 */
 		function generateCustomOutput(outputConfig) {
 
-			var context = o;
+			// Accesses context
+			var context = prepareTemplateContext();
 
-			var templatePath = outputConfig.template,
-				extension = path.extname(templatePath),
-				syntax = outputConfig.syntax || '';
+			// Prepares config attributes related to template filepath
+			var templatePath = outputConfig.template;
+			var extension = path.extname(templatePath);
+			var syntax = outputConfig.syntax || '';
 
-			var template = readTemplate(templatePath, syntax, extension),
-				output = renderTemplate(template, context);
+			// Renders template with given context
+			var template = readTemplate(templatePath, syntax, extension);
+			var output = renderTemplate(template, context);
 
-			var dest = outputConfig.dest || o.dest,
-				destName = outputConfig.destName || path.baseName(outputConfig.template);
-
+			// Prepares config attributes related to destination filepath
+			var dest = outputConfig.dest || o.dest;
+			var destName = outputConfig.destName || path.baseName(outputConfig.template);
 			var filepath = path.join(dest, destName);
 
 			// Ensure existence of parent directory and write file
@@ -413,9 +473,13 @@ module.exports = function(grunt) {
 			fs.writeFileSync(filepath, output);
 		}
 
+		/*
+		 * Iterates over entries in the `options.customOutputs` object and,
+		 * on a config-by-config basis, generates the desired results.
+		 */
 		function generateCustomOutputs(done) {
 
-			if (!o.customOutputs.length || o.customOutputs.length < 1) {
+			if (!o.customOutputs || o.customOutputs.length < 1) {
 				done();
 				return;
 			}
@@ -435,27 +499,11 @@ module.exports = function(grunt) {
 				return;
 			}
 
-			// HTML should not contain relative paths
-			// If some styles was not included in CSS we should include them in HTML to properly render icons
-			var relativeRe = new RegExp(_s.escapeRegExp(o.relativeFontPath), 'g');
-			var htmlRelativeFontPath = normalizePath(path.relative(o.destHtml, o.dest));
-			var context = _.extend(o, {
-				fontSrc1: o.fontSrc1.replace(relativeRe, htmlRelativeFontPath),
-				fontSrc2: o.fontSrc2.replace(relativeRe, htmlRelativeFontPath),
-				fontfaceStyles: true,
-				baseStyles: true,
-				extraStyles: false,
-				iconsStyles: true,
-				stylesheet: 'css'
-			});
-			var htmlStyles = renderTemplate(o.cssTemplate, context);
-			var htmlContext = _.extend(context, {
-				styles: htmlStyles
-			});
+			var context = prepareTemplateContext('html');
 
 			// Generate HTML
 			var demoTemplate = readTemplate(o.htmlDemoTemplate, 'demo', '.html');
-			var demo = renderTemplate(demoTemplate, htmlContext);
+			var demo = renderTemplate(demoTemplate, context);
 
 			// Save file
 			fs.writeFileSync(getDemoFilePath(), demo);
