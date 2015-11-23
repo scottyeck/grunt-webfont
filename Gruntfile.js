@@ -294,6 +294,12 @@ module.exports = function(grunt) {
 					}, {
 						template: 'test/templates/custom.json',
 						dest: 'test/tmp/custom_output'
+					}, {
+						template: 'test/templates/context-test.html',
+						dest: 'test/tmp/custom_output',
+						context: {
+							testHeading: 'Hello, world!'
+						}
 					}]
 				}
 			},

@@ -453,6 +453,7 @@ module.exports = function(grunt) {
 
 			// Accesses context
 			var context = prepareTemplateContext();
+			_.extend(context, outputConfig.context);
 
 			// Prepares config attributes related to template filepath
 			var templatePath = outputConfig.template;
