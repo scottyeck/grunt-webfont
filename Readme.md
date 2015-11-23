@@ -427,8 +427,9 @@ Each entry in `customOutputs` should be an object with two parameters:
 
 * `template` - (`string`) the path to the underscore-template you wish to use.
 * `dest` - (`string`) the path to the destination where you want the resulting file to live.
+* `context` \[optional\] - (`object`) a hash of values to pass into the context of the template at compile-time
 
-At compile-time each template will have access to the same context as the compile-time environment of `htmlDemoTemplate`. See config-example below.
+At compile-time each template will have access to the same context as the compile-time environment of `htmlDemoTemplate` (as extended by the `context` object, if provided. See config-example below.
 
 ### Config Examples
 
@@ -522,6 +523,12 @@ webfont: {
 			}, {
 				template: 'templates/icon-glyph-config-boilerplate.json',
 				dest: 'build/js/icon-glyphs.json'
+			}, {
+				template: 'templates/icon-web-home.html',
+				dest: 'build/',
+				context: {
+					testHeading: 'Hello, world!'
+				}
 			}]
 		}
 	}
@@ -548,6 +555,23 @@ The second, for `icon-glyph-config-boilerplate.json`, a file that dumps all JSON
 // file: icon-glyph-config-boilerplate.json
 
 <%= JSON.stringify(arguments[0], null, '\t') %>
+```
+
+And finally, the third, for `icon-web-home.html`, a file that has access to the values provided in the `context` object supplied.
+
+```
+// file: icon-web-home.html
+
+<!DOCTYPE html>
+<html class="no-js">
+    <head>
+        <meta charset="utf-8">
+        <title>Context Test</title>
+    </head>
+    <body>
+        <h1><%= testHeading %></h1>
+    </body>
+</html>
 ```
 
 ## CSS Preprocessors Caveats
