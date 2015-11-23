@@ -417,6 +417,19 @@ options: {
 }
 ```
 
+#### customOutputs
+
+Type: `array` Default: `undefined`
+
+Allows for custom content to be generated and output in the same way as `htmlDemo`.
+
+Each entry in `customOutputs` should be an object with two parameters:
+
+* `template` - (`string`) the path to the underscore-template you wish to use.
+* `dest` - (`string`) the path to the destination where you want the resulting file to live.
+
+At compile-time each template will have access to the same context as the compile-time environment of `htmlDemoTemplate`. See config-example below.
+
 ### Config Examples
 
 #### Simple font generation
@@ -493,6 +506,48 @@ webfont: {
 		}
 	}
 }
+```
+
+#### Custom Outputs
+
+```javascript
+webfont: {
+	icons: {
+		src: 'icons/*.svg',
+		dest: 'build/fonts',
+		options: {
+			customOutputs: [{
+				template: 'templates/icon-glyph-list-boilerplate.js',
+				dest: 'build/js/icon-glyph-list.js'
+			}, {
+				template: 'templates/icon-glyph-config-boilerplate.json',
+				dest: 'build/js/icon-glyphs.json'
+			}]
+		}
+	}
+}
+```
+
+We might then include the following corresponding templates.
+
+The first, for `icon-glyph-list-boilerplate.js`, a file that outputs a list of icon-glyph slugs.
+
+```
+// file: icon-glyph-list-boilerplate.js
+
+(function() {
+	'use strict';
+
+	var test = <%= JSON.stringify(glyphs) %>;
+}());
+```
+
+The second, for `icon-glyph-config-boilerplate.json`, a file that dumps all JSON data in the current template context.
+
+```
+// file: icon-glyph-config-boilerplate.json
+
+<%= JSON.stringify(arguments[0], null, '\t') %>
 ```
 
 ## CSS Preprocessors Caveats
