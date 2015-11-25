@@ -392,21 +392,10 @@ module.exports = function(grunt) {
 		}
 
 		/*
-		 * Prepares context for compilation of template
+		 * Prepares base context for templates
 		 */
-		function prepareTemplateContext(key) {
-
+		function prepareBaseTemplateContext() {
 			var context = _.extend({}, o);
-
-			if (_.isUndefined(key)) {
-				return context;
-			}
-
-			if (key === 'html') {
-				return prepareHTMLContext(context);
-			}
-
-			logger.warn('Key specified to function `prepareTemplateContext` does not correspond to a particular method.');
 			return context;
 		}
 
@@ -414,7 +403,9 @@ module.exports = function(grunt) {
 		 * Makes custom extends necessary for use with preparing the template context
 		 * object for the HTML demo.
 		 */
-		function prepareHTMLContext(context) {
+		function prepareHtmlTemplateContext() {
+
+			var context = prepareBaseTemplateContext();
 
 			var htmlStyles;
 
@@ -451,7 +442,7 @@ module.exports = function(grunt) {
 		function generateCustomOutput(outputConfig) {
 
 			// Accesses context
-			var context = prepareTemplateContext();
+			var context = prepareBaseTemplateContext();
 			_.extend(context, outputConfig.context);
 
 			// Prepares config attributes related to template filepath
@@ -513,7 +504,7 @@ module.exports = function(grunt) {
 				return;
 			}
 
-			var context = prepareTemplateContext('html');
+			var context = prepareHtmlTemplateContext();
 
 			// Generate HTML
 			var demoTemplate = readTemplate(o.htmlDemoTemplate, 'demo', '.html');
