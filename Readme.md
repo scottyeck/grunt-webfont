@@ -423,11 +423,11 @@ Type: `array` Default: `undefined`
 
 Allows for custom content to be generated and output in the same way as `htmlDemo`.
 
-Each entry in `customOutputs` should be an object with two parameters:
+Each entry in `customOutputs` should be an object with the following parameters:
 
 * `template` - (`string`) the path to the underscore-template you wish to use.
 * `dest` - (`string`) the path to the destination where you want the resulting file to live.
-* `context` \[optional\] - (`object`) a hash of values to pass into the context of the template at compile-time
+* `context` \[optional\] - (`object`) a hash of values to pass into the context of the template
 
 At compile-time each template will have access to the same context as the compile-time environment of `htmlDemoTemplate` (as extended by the `context` object, if provided. See config-example below.
 
@@ -542,11 +542,12 @@ The first, for `icon-glyph-list-boilerplate.js`, a file that outputs a list of i
 ```
 // file: icon-glyph-list-boilerplate.js
 
-(function() {
+(function(window) {
 	'use strict';
 
-	var test = <%= JSON.stringify(glyphs) %>;
-}());
+	var iconList = <%= JSON.stringify(glyphs) %>;
+	window.iconList = iconList;
+}(this));
 ```
 
 The second, for `icon-glyph-config-boilerplate.json`, a file that dumps all JSON data in the current template context.
