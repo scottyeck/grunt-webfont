@@ -527,7 +527,8 @@ webfont: {
 				template: 'templates/icon-web-home.html',
 				dest: 'build/',
 				context: {
-					testHeading: 'Hello, world!'
+					homeHeading: 'Your Icon Font',
+					homeMessage: 'The following glyphs are available in this font:'
 				}
 			}]
 		}
@@ -570,7 +571,13 @@ And finally, the third, for `icon-web-home.html`, a file that has access to the 
         <title>Context Test</title>
     </head>
     <body>
-        <h1><%= testHeading %></h1>
+        <h1><%= homeHeading %></h1>
+        <p><%= homeMessage %></p>
+        <ul>
+        	<% for (var i = 0; i < glpyhs.length; i++) { %>
+        	<li><a href="#"><%= glyphs[i] %></a></li>
+        	<% } %>
+        </ul>
     </body>
 </html>
 ```
