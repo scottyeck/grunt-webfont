@@ -9,7 +9,6 @@ module.exports = function(grunt) {
 	'use strict';
 
 	var fs = require('fs');
-	var fse = require('fs-extra');
 	var path = require('path');
 	var async = require('async');
 	var glob = require('glob');
@@ -484,7 +483,7 @@ module.exports = function(grunt) {
 			}
 
 			// Ensure existence of parent directory and output to file as desired
-			fse.ensureDirSync(destParent);
+			mkdirp.sync(destParent);
 			fs.writeFileSync(filepath, output);
 		}
 
